@@ -1,14 +1,48 @@
 <!DOCTYPE html>
 <html>
   <head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Black Jack</title>
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/screen.css">
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/screen.css" />
   </head>
   <body>
-    <h1 class='hello-world'></h1>
+    <h1>Black Jack</h1>
+    <section class="control-area">
+      <button class="btn btn-hit show">Hit</button>
+      <button class="btn btn-stand show">Stand</button>
+      <button class="btn btn-reset hide">Reset</button>
+    </section>
+    <section class="play-area">
+      <section class="player-area">
+        <h2>Player Hand</h2>
+        <p>Total</p>
+        <p class="player-card-total card-total">0</p>
+        <ul class="player-cards cards-display">
+          <li>
+            <img class="card" src="./images/cards/10_of_clubs.svg" alt="" />
+          </li>
+          <li>
+            <img class="card" src="./images/cards/10_of_clubs.svg" alt="" />
+          </li>
+        </ul>
+      </section>
+
+      <section class="computer-area">
+        <h2>Computer Hand</h2>
+        <p>Total</p>
+        <p class="player-card-total card-total">0</p>
+        <ul class="computer-cards cards-display">
+          <li>
+            <img class="card" src="./images/cards/10_of_clubs.svg" alt="" />
+          </li>
+          <li>
+            <img class="card" src="./images/cards/10_of_clubs.svg" alt="" />
+          </li>
+        </ul>
+      </section>
+    </section>
     <script src="/main.js" charset="utf-8"></script>
   </body>
 </html>
