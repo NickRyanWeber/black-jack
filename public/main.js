@@ -15,33 +15,36 @@ const state = {
     { name: 'queen', value: 10 },
     { name: 'king', value: 10 }
   ],
-
   deck: [],
-  playerHand: [],
-  computerHand: []
+
+  player: {
+    hand: [],
+    score: 0,
+    displayScore: document.querySelector('.player-card-total'),
+    displayCard: document.querySelector('.player-cards')
+  },
+
+  computer: {
+    hand: [],
+    score: 0,
+    displayScore: document.querySelector('.computer-card-total'),
+    displayCard: document.querySelector('.computer-cards')
+  }
 }
 
-// New Game function
 const newGame = () => {
-  // -- Clears hands, clears deck, makes new deck, shuffles new deck
-  state.playerHand = []
-  state.computerHand = []
+  state.player.hand = []
+  state.computer.hand = []
   state.deck = []
   newDeck()
   shuffleDeck()
-  // // -- Deals 2 cards to player and dealer from deck (use for loop?)
-  // dealCard(playerHand)
-  // dealCard(computerHand)
-  // dealCard(playerHand)
-  // dealCard(computerHand)
-  // // -- Runs Calculate Cards function on dealer cards and player
-  // calculateCards(playerHand)
-  // calculateCards(computerHand)
+  for (let i = 0; i < 2; i++) {
+    dealCard('player')
+    dealCard('computer')
+  }
 }
 
-// Make Deck
 const newDeck = () => {
-  // -- for-loop to create deck object
   for (let i = 0; i < state.suits.length; i++) {
     const suit = state.suits[i]
     for (let j = 0; j < state.ranks.length; j++) {
@@ -53,17 +56,70 @@ const newDeck = () => {
       })
     }
   }
-  console.log(state.deck)
+  console.log(['New Deck', state.deck])
 }
 
-// Shuffle Deck
-// -- shuffle-function to shuffle deck object
+const shuffleDeck = () => {
+  for (let i = state.deck.length - 1; i >= 0; i--) {
+    const random = Math.floor(Math.random() * i)
+    const temp = state.deck[random]
+    state.deck[random] = state.deck[i]
+    state.deck[i] = temp
+  }
+  console.log(['Shuffled Deck', state.deck])
+}
 
-// Deal Cards function
-// -- Takes arguments to who the cards get dealt to
+const dealCard = who => {
+  const card = state.deck.pop()
+  state[who].hand.push(card)
 
-// Hit Button Press
-// -- Runs deal card function passing player and 1 card
+  const cardImg = document.createElement('img')
+  cardImg.src = `./images/cards/${card.rank}_of_${card.suit}.svg`
+  cardImg.classList.add('card')
+  state[who].displayCard.appendChild(cardImg)
+
+  calculateScore()
+}
+
+const calculateScore = () => {
+  calculateCards('player')
+  calculateCards('computer')
+  checkScore('player', 0)
+  checkScore('computer', 0)
+}
+
+const checkScore = (who, final) => {
+  const score = state[who].score
+  if (score >= 22) {
+    console.log(`${who} BUSTED`)
+  } else if (score === 21) {
+    console.log(`${who} got Black Jack`)
+  } else if (final === 1) {
+    if (state.player.score > state.computer.score) {
+      console.log('Player Wins')
+    } else if (state.player.score < state.computer.score) {
+      console.log('Computer Wins')
+    } else if (state.player.score === state.computer.score) {
+      console.log('Tie')
+    } else {
+      console.log('Something went wrong with the scores.')
+    }
+  }
+}
+
+const calculateCards = who => {
+  let cardValue = 0
+  state[who].score = 0
+
+  for (let i = 0; i < state[who].hand.length; i++) {
+    cardValue = state[who].hand[i].value
+    state[who].score += cardValue
+  }
+
+  state[who].displayScore.textContent = state[who].score
+
+  console.log(`${who}'s Score is ${state[who].score}`)
+}
 
 // Stay Function
 // -- Runs when Stay button pressed
@@ -72,9 +128,11 @@ const newDeck = () => {
 // -- "Ends" game after dealer is done hitting and calculates winner
 // -- Displays winner and displays a "Play Again" button
 
-// Calculate Cards
-// -- Takes arguments for hand being calculated
-// -- Checks the total value of the cards
-// -- If over 21 "busts" that hand
-
 document.addEventListener('DOMContentLoaded', newGame)
+// Hit Button Press
+// -- Runs deal card function passing player and 1 card
+document.querySelector('.btn-hit').addEventListener('click', () => {
+  dealCard('player')
+})
+
+document.querySelector('.btn-reset').addEventListener('click', newGame)
