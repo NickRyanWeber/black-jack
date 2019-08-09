@@ -34,8 +34,24 @@ const state = {
 
 const newGame = () => {
   state.player.hand = []
+  state.player.score = 0
   state.computer.hand = []
+  state.computer.score = 0
   state.deck = []
+
+  document.querySelector('.player-cards').innerHTML = ''
+  document.querySelector('.computer-cards').innerHTML = ''
+  document.querySelector('.message-area').innerHTML = ''
+
+  document.querySelector('.btn-hit').classList.remove('hide')
+  document.querySelector('.btn-hit').classList.add('show')
+
+  document.querySelector('.btn-stand').classList.remove('hide')
+  document.querySelector('.btn-stand').classList.add('show')
+
+  document.querySelector('.btn-reset').classList.remove('show')
+  document.querySelector('.btn-reset').classList.add('hide')
+
   newDeck()
   shuffleDeck()
   for (let i = 0; i < 2; i++) {
@@ -90,21 +106,78 @@ const calculateScore = () => {
 
 const checkScore = (who, final) => {
   const score = state[who].score
+  let winner
+  let loser
   if (score >= 22) {
     console.log(`${who} BUSTED`)
+    winner = switchWho(who)
+    setWin(winner, 'busted')
   } else if (score === 21) {
     console.log(`${who} got Black Jack`)
+    setWin(who, 0)
   } else if (final === 1) {
     if (state.player.score > state.computer.score) {
       console.log('Player Wins')
+      setWin('player', 0)
     } else if (state.player.score < state.computer.score) {
       console.log('Computer Wins')
+      setWin('computer', 0)
     } else if (state.player.score === state.computer.score) {
       console.log('Tie')
+      const message = document.createElement('p')
+      message.textContent = 'Tie'
+      document.querySelector('.message-area').appendChild(message)
+
+      document.querySelector('.btn-hit').classList.remove('show')
+      document.querySelector('.btn-hit').classList.add('hide')
+
+      document.querySelector('.btn-stand').classList.remove('show')
+      document.querySelector('.btn-stand').classList.add('hide')
+
+      document.querySelector('.btn-reset').classList.remove('hide')
+      document.querySelector('.btn-reset').classList.add('show')
     } else {
       console.log('Something went wrong with the scores.')
     }
   }
+}
+
+const switchWho = who => {
+  if (who === 'player') {
+    return 'computer'
+  } else if (who === 'computer') {
+    return 'player'
+  } else {
+    console.log('switchWho who fail')
+  }
+}
+
+const setWin = (winner, loseReason) => {
+  let loser
+  if (winner == 'player') {
+    loser = 'computer'
+  } else if (winner == 'computer') {
+    loser == 'player'
+  } else {
+    console.log('setWin name fail')
+  }
+
+  if (loseReason === 0) {
+    loseReason = 'Loser'
+  }
+
+  const message = document.createElement('p')
+  message.textContent = `${winner} wins, ${loser} ${loseReason}`
+  document.querySelector('.message-area').appendChild(message)
+
+  document.querySelector('.btn-hit').classList.remove('show')
+  document.querySelector('.btn-hit').classList.add('hide')
+
+  document.querySelector('.btn-stand').classList.remove('show')
+  document.querySelector('.btn-stand').classList.add('hide')
+
+  document.querySelector('.btn-reset').classList.remove('hide')
+  document.querySelector('.btn-reset').classList.add('show')
 }
 
 const calculateCards = who => {
@@ -122,17 +195,25 @@ const calculateCards = who => {
 }
 
 // Stay Function
-// -- Runs when Stay button pressed
-// -- Dealer cards shown
-// -- for loop checking if dealer hand is below 17 and hits if it is
-// -- "Ends" game after dealer is done hitting and calculates winner
-// -- Displays winner and displays a "Play Again" button
+const playerStay = () => {
+  while (state.computer.score < 16) {
+    dealCard('computer')
+  }
+  checkScore('computer', 1)
+
+  document.querySelector('.btn-hit').classList.remove('show')
+  document.querySelector('.btn-hit').classList.add('hide')
+
+  document.querySelector('.btn-stand').classList.remove('show')
+  document.querySelector('.btn-stand').classList.add('hide')
+
+  document.querySelector('.btn-reset').classList.remove('hide')
+  document.querySelector('.btn-reset').classList.add('show')
+}
 
 document.addEventListener('DOMContentLoaded', newGame)
-// Hit Button Press
-// -- Runs deal card function passing player and 1 card
 document.querySelector('.btn-hit').addEventListener('click', () => {
   dealCard('player')
 })
-
 document.querySelector('.btn-reset').addEventListener('click', newGame)
+document.querySelector('.btn-stand').addEventListener('click', playerStay)
